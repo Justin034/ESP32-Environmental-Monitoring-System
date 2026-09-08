@@ -12,18 +12,18 @@
 
 #define BUTTON_GPIO GPIO_NUM_0       // Pushbutton GPIO
 #define DEBOUNCE_DELAY_US 200000ULL  // Debounce delay in microseconds (200 ms)
+#define DHT_PIN GPIO_NUM_14
 
 static volatile uint64_t last_isr_time = 0;
 static volatile uint32_t counter = 0;
 char printBuf[16] = {0};
+
 i2c_master_dev_handle_t MPU6050_handle;
 i2c_master_dev_handle_t LCD_handle;
 i2c_master_dev_handle_t DS3231_handle;
 dht11_data_t data;
 uint8_t databuf[6] = {0};
 bool flag = false;
-
-#define DHT_PIN GPIO_NUM_14
 
 typedef enum
 {
@@ -36,6 +36,10 @@ typedef enum
 static volatile system_mode_t current_mode = MODE_A;
 
 static TaskHandle_t control_task_handle = NULL;
+
+//----------------------------------------
+// ACTIVITY A
+//----------------------------------------
 
 void activity_A(void)
 {
@@ -88,6 +92,10 @@ void activity_B(void)
     vTaskDelay(pdMS_TO_TICKS(500));
 
 }
+
+//----------------------------------------
+// ACTIVITY C
+//----------------------------------------
 
 void activity_C(void)
 {
@@ -183,6 +191,10 @@ void worker_task(void *pvParameters)
         }
     }
 }
+
+//----------------------------------------
+// MAIN
+//----------------------------------------
 
 void app_main(void)
 {
