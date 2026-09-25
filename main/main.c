@@ -94,28 +94,8 @@ void activity_B(void)
 }
 
 //----------------------------------------
-// ACTIVITY C
+// BUTTON SETUP
 //----------------------------------------
-
-void activity_C(void)
-{
-    printf("Running Activity C\n");
-
-    // Clearing lines
-    lcd_clear_line(1);
-    
-    uint8_t write = 0x43;
-    ESP_ERROR_CHECK(i2c_master_transmit_receive(MPU6050_handle, &write, 1, databuf, 6, -1));
-
-    int16_t arr[3] = {0};
-    dht11_convert(&databuf[0], arr);
-    
-    sprintf(printBuf, "x:%d", arr[0]);
-    lcd_set_cursor(0,1);
-    lcd_write_string(printBuf);
-    vTaskDelay(pdMS_TO_TICKS(500));
-    
-}
 
 static void IRAM_ATTR button_isr(void *arg)
 {
@@ -150,11 +130,6 @@ void control_task(void *pvParameters)
             current_mode = MODE_B;
             printf("\n=== SWITCHED TO MODE_B ===\n\n");
         }
-        else if (current_mode == MODE_B)
-        {
-            current_mode = MODE_C;
-            printf("\n=== SWITCHED TO MODE_C ===\n\n");
-        }
         else
         {
             current_mode = MODE_A;
@@ -179,10 +154,6 @@ void worker_task(void *pvParameters)
 
             case MODE_B:
                 activity_B();
-                break;
-
-            case MODE_C:
-                activity_C();
                 break;
 
             default:
@@ -232,7 +203,7 @@ void app_main(void)
     i2c_master_bus_handle_t bus_handle;
     ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_mst_config, &bus_handle));
 
-    // MPU init
+    // MPU inits
     MPU6050_handle = init_mpu6050(bus_handle);
 
     // LCD init
