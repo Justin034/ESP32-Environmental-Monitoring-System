@@ -18,11 +18,9 @@ static volatile uint64_t last_isr_time = 0;
 static volatile uint32_t counter = 0;
 char printBuf[16] = {0};
 
-i2c_master_dev_handle_t MPU6050_handle;
 i2c_master_dev_handle_t LCD_handle;
 i2c_master_dev_handle_t DS3231_handle;
 dht11_data_t data;
-uint8_t databuf[6] = {0};
 bool flag = false;
 
 typedef enum
@@ -203,9 +201,6 @@ void app_main(void)
     i2c_master_bus_handle_t bus_handle;
     ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_mst_config, &bus_handle));
 
-    // MPU inits
-    MPU6050_handle = init_mpu6050(bus_handle);
-
     // LCD init
     LCD_handle = init_lcd(bus_handle);
     lcdBootUp(bus_handle, LCD_handle);
@@ -213,7 +208,6 @@ void app_main(void)
 
     // DS3231 init
     DS3231_handle = init_ds3231(bus_handle);
-
 
     // DS3231 Setup
     uint8_t arr[8];
@@ -229,11 +223,6 @@ void app_main(void)
 
     ESP_ERROR_CHECK(i2c_master_transmit(DS3231_handle, arr, sizeof(arr), -1));
     i2c_master_transmit(DS3231_handle, &base, 1, -1);
-
-    // uint8_t time[4] = {0};
-
-    // get_time(time);
-    // set_time(time, DS3231_handle);
     
     printf("Presets are done. Commencing main loop.\n");
 
