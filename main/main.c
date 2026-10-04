@@ -6,7 +6,6 @@
 #include "driver/gpio.h"
 #include "driver/i2c_master.h"
 #include "lcd.h"
-#include "mpu6050.h"
 #include <esp_timer.h>
 #include <esp_err.h>
 
